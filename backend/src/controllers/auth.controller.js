@@ -29,7 +29,7 @@ const authController = {
   },
   loginController: async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { email } = req.body;
       const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const checkEmail = regex.test(email);
       if (!checkEmail) {
@@ -39,7 +39,16 @@ const authController = {
         });
       }
       const response = await authService.loginService(req.body);
-      return res.status(response.code).json(response);
+      const { refresh_token, ...others } = response;
+      if (response.status === "OK") {
+        res.cookie("refreshToken", refresh_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "strict",
+          path: "/",
+        });
+      }
+      return res.status(others.code).json(others);
     } catch (e) {
       return res.status(500).json({
         status: "ERR",

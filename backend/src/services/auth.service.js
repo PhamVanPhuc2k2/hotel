@@ -1,5 +1,6 @@
 const User = require("../models/user.model");
 const bcryptjs = require("bcryptjs");
+const jwt = require("../utils/jwt");
 
 const authService = {
   registerService: async (data) => {
@@ -65,11 +66,18 @@ const authService = {
           code: 404,
         };
       }
+      const payload = { id: checkUser._id, role: checkUser.role };
+      const access_token = jwt.generateAccessToken(payload);
+      const refresh_token = jwt.generateRefreshToken(payload);
+      const user = checkUser.toObject();
+      delete user.password;
       return {
         status: "OK",
         message: "Đăng nhập thành công!",
         code: 200,
-        user: checkUser,
+        user: user,
+        access_token: access_token,
+        refresh_token: refresh_token,
       };
     } catch (e) {
       throw e;
