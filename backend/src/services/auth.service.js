@@ -41,6 +41,40 @@ const authService = {
       throw e;
     }
   },
+  loginService: async (data) => {
+    try {
+      const { email, password } = data;
+      const checkUser = await User.findOne({
+        email: email,
+      });
+      if (!checkUser) {
+        return {
+          status: "ERR",
+          message: "Tài khoản chưa được đăng ký!",
+          code: 404,
+        };
+      }
+      const comparePassword = bcryptjs.compareSync(
+        password,
+        checkUser.password
+      );
+      if (!comparePassword) {
+        return {
+          status: "ERR",
+          message: "Mật khẩu không chính xác!",
+          code: 404,
+        };
+      }
+      return {
+        status: "OK",
+        message: "Đăng nhập thành công!",
+        code: 200,
+        user: checkUser,
+      };
+    } catch (e) {
+      throw e;
+    }
+  },
 };
 
 module.exports = authService;
