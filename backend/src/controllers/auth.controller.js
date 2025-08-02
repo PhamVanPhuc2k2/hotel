@@ -56,6 +56,37 @@ const authController = {
       });
     }
   },
+  googleController: async (req, res) => {
+    try {
+      const { username, email, avatar } = req.body;
+      if (!email) {
+        return res.status(400).json({
+          status: "ERR",
+          message: "Thiếu thông tin email hoặc googleId!",
+        });
+      }
+      const response = await authService.googleService({
+        username,
+        email,
+        avatar,
+      });
+      const { refresh_token, ...others } = response;
+      if (response.status === "OK") {
+        res.cookie("refreshToken", refresh_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "strict",
+          path: "/",
+        });
+      }
+      return res.status(response.code).json(others);
+    } catch (e) {
+      return res.status(500).json({
+        status: "ERR",
+        message: e.message || "Đã xảy ra lỗi ở phía serevr!",
+      });
+    }
+  },
 };
 
 module.exports = authController;

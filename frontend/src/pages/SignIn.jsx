@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { loginStart, loginSuccess, loginFailed } from "../redux/user/authSlice";
+import Auth from "../components/Auth";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -90,6 +91,7 @@ const SignIn = () => {
         <button className="bg-green-700 text-white p-3 rounded-lg uppercase disabled:opacity-95 cursor-pointer">
           {loading ? "Loading..." : "Sign up"}
         </button>
+        <Auth />
         {error && <p className="text-red-500 text-center">{error}</p>}
         {success && <p className="text-green-500 text-center">{success}</p>}
         <div className="flex gap-2 mt-5">
